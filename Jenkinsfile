@@ -1,21 +1,77 @@
 pipeline {
     agent any
 
-    triggers {
-        pollSCM('* * * * *')
+    parameters {
+        choice(
+            name: 'ACTION',
+            choices: ['MONITOR', 'START', 'STOP', 'RESTART'],
+            description: 'Select Docker Container Action'
+        )
+    }
+
+    environment {
+        CONTAINER_NAME = "flask-monitor"
     }
 
     stages {
-        stage('Check Container') {
+
+        stage('Checkout') {
             steps {
-                bat 'docker ps'
+                checkout scm
             }
         }
 
-        stage('Monitor') {
+        stage('Docker Version') {
             steps {
-                powershell '.\\monitor.ps1'
+                bat 'docker version'
             }
+        }
+
+        stage('Container Action') {
+            steps {
+                script {
+
+                    if (params.ACTION == "START") {
+                        bat "docker start %CONTAINER_NAME%"
+                    }
+
+                    if (params.ACTION == "STOP") {
+                        bat "docker stop %CONTAINER_NAME%"
+                    }
+
+                    if (params.ACTION == "RESTART") {
+                        bat "docker restart %CONTAINER_NAME%"
+                    }
+
+                    if (params.ACTION == "MONITOR") {
+                        powershell '''
+                        Set-ExecutionPolicy -Scope Process Bypass
+                        .\\monitor.ps1
+                        '''
+                    }
+                }
+            }
+        }
+
+        stage('Container Status') {
+            steps {
+                bat 'docker ps -a'
+            }
+        }
+    }
+
+    post {
+
+        success {
+            echo "Pipeline Completed Successfully."
+        }
+
+        failure {
+            echo "Pipeline Failed."
+        }
+
+        always {
+            echo "Self-Healing Docker Monitoring Completed."
         }
     }
 }

@@ -1,31 +1,37 @@
 $ContainerName = "flask-monitor"
 
-$LogFolder = ".\logs"
+$ProjectPath = "C:\Users\User\self-healing-project"
+
+$LogFolder = "$ProjectPath\logs"
 $LogFile = "$LogFolder\incidents.log"
 
 if (!(Test-Path $LogFolder)) {
     New-Item -ItemType Directory -Path $LogFolder | Out-Null
 }
 
-$status = docker inspect -f "{{.State.Running}}" $ContainerName
+if (!(Test-Path $LogFile)) {
+    New-Item -ItemType File -Path $LogFile | Out-Null
+}
 
-if ($status -eq "true") {
+$status = docker inspect -f "{{.State.Status}}" $ContainerName
 
-    $message = "$(Get-Date) - Container is RUNNING"
-    Write-Host $message
-    Add-Content -Path $LogFile -Value $message
+if ($status -eq "running") {
+
+    $msg = "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') - Container is running."
+    Write-Host $msg
+    Add-Content $LogFile $msg
 
 }
 else {
 
-    $message = "$(Get-Date) - Container stopped. Restarting..."
-    Write-Host $message
-    Add-Content -Path $LogFile -Value $message
+    $msg = "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') - Container stopped. Restarting..."
+    Write-Host $msg
+    Add-Content $LogFile $msg
 
     docker restart $ContainerName
 
-    $message = "$(Get-Date) - Container restarted successfully."
-    Write-Host $message
-    Add-Content -Path $LogFile -Value $message
+    $msg = "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') - Container restarted successfully."
+    Write-Host $msg
+    Add-Content $LogFile $msg
 
 }

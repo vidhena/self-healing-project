@@ -13,13 +13,69 @@
 
 <body class="bg-light">
 
-<div class="container mt-5">
+<div class="container mt-4">
 
     <h1 class="text-center text-primary">
         Self-Healing Docker Container Monitoring System
     </h1>
 
     <hr>
+
+    <!-- Statistics Cards -->
+
+    <div class="row mb-4">
+
+        <div class="col-md-4">
+
+            <div class="card text-white bg-primary shadow">
+
+                <div class="card-body text-center">
+
+                    <h5>Total Containers</h5>
+
+                    <h2>{{ total }}</h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-4">
+
+            <div class="card text-white bg-success shadow">
+
+                <div class="card-body text-center">
+
+                    <h5>Running</h5>
+
+                    <h2>{{ running }}</h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-4">
+
+            <div class="card text-white bg-danger shadow">
+
+                <div class="card-body text-center">
+
+                    <h5>Stopped</h5>
+
+                    <h2>{{ stopped }}</h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Container Table -->
 
     <table class="table table-bordered table-hover shadow">
 
@@ -57,15 +113,15 @@
 
                 {% if container.status=="running" %}
 
-                    <span class="badge bg-success">
-                        Running
-                    </span>
+                <span class="badge bg-success">
+                    Running
+                </span>
 
                 {% else %}
 
-                    <span class="badge bg-danger">
-                        {{ container.status }}
-                    </span>
+                <span class="badge bg-danger">
+                    {{ container.status }}
+                </span>
 
                 {% endif %}
 
@@ -94,6 +150,50 @@
         </tbody>
 
     </table>
+
+    <!-- Incident Logs -->
+
+    <div class="card shadow mt-4">
+
+        <div class="card-header bg-dark text-white">
+
+            <h4>Incident Logs</h4>
+
+        </div>
+
+        <div class="card-body">
+
+            <table class="table table-striped">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Recent Events</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                {% for log in logs %}
+
+                    <tr>
+
+                        <td>{{ log }}</td>
+
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
 
 </div>
 

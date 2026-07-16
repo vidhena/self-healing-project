@@ -45,7 +45,7 @@ pipeline {
 
                     if (params.ACTION == "MONITOR") {
                         bat'''
-                        py monitor.py
+                        python monitor.python
                         '''
                     }
                 }

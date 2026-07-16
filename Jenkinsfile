@@ -25,6 +25,20 @@ pipeline {
                 checkout scm
             }
         }
+        stage('Debug Files') {
+        steps {
+        bat '''
+        echo ===== Current Folder =====
+        cd
+        echo.
+        echo ===== Files =====
+        dir
+        echo.
+        echo ===== Jenkinsfile =====
+        type Jenkinsfile
+        '''
+    }
+}
         stage('debug'){
             steps {
                 bat 'type Jenkinsfile'

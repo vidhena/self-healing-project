@@ -44,9 +44,8 @@ pipeline {
                     }
 
                     if (params.ACTION == "MONITOR") {
-                        powershell '''
-                        Set-ExecutionPolicy -Scope Process Bypass
-                        .\\monitor.ps1
+                        bat'''
+                        py monitor.py
                         '''
                     }
                 }

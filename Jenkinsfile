@@ -28,9 +28,7 @@ pipeline {
         }
         stage('Check Python'){
             steps{
-                bat'''
-                " C:\\Users\\User\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe" --version
-                '''
+                bat 'python --version'
             }
     }
         stage('Container Action') {
@@ -50,9 +48,7 @@ pipeline {
                     }
 
                     if (params.ACTION == "MONITOR") {
-                        bat'''
-                        "C:\\Users\\User\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe monitor.py
-                        '''
+                        bat '"C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python314\\python.exe" --version'
                     }
                 }
             }

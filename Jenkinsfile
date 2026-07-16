@@ -29,7 +29,7 @@ pipeline {
         stage('Check Python'){
             steps{
                 bat'''
-                " C:\Users\\User\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe" --version
+                " C:\\Users\\User\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe" --version
                 '''
             }
     }
@@ -51,7 +51,7 @@ pipeline {
 
                     if (params.ACTION == "MONITOR") {
                         bat'''
-                        python monitor.py
+                        "C:\\Users\\User\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe monitor.py
                         '''
                     }
                 }

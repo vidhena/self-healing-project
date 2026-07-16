@@ -20,7 +20,11 @@ pipeline {
                 checkout scm
             }
         }
-
+        stage('debug'){
+            steps {
+                bat 'type Jenkinsfile'
+            }
+        }
         stage('Docker Version') {
             steps {
                 bat 'docker version'
@@ -48,7 +52,7 @@ pipeline {
                     }
 
                     if (params.ACTION == "MONITOR") {
-                        bat '"C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python314\\python.exe" --version'
+                        bat 'python monitor.py'
                     }
                 }
             }

@@ -26,7 +26,14 @@ pipeline {
                 bat 'docker version'
             }
         }
-
+        stage('Check Python'){
+            steps{
+                bat'''
+                where python
+                python--version
+                '''
+            }
+    }
         stage('Container Action') {
             steps {
                 script {

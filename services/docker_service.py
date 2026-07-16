@@ -2,32 +2,17 @@ import docker
 
 client = docker.from_env()
 
-CONTAINER_NAME = "flask-monitor"
+def get_all_containers():
+    containers = client.containers.list(all=True)
 
-def get_container():
-    return client.containers.get(CONTAINER_NAME)
+    container_list = []
 
-def get_container_status():
-    try:
-        container = get_container()
-        return {
+    for container in containers:
+        container_list.append({
+            "id": container.short_id,
             "name": container.name,
-            "status": container.status
-        }
-    except Exception:
-        return {
-            "name": CONTAINER_NAME,
-            "status": "Not Found"
-        }
+            "status": container.status,
+            "image": container.image.tags[0] if container.image.tags else "No Tag"
+        })
 
-def start_container():
-    container = get_container()
-    container.start()
-
-def stop_container():
-    container = get_container()
-    container.stop()
-
-def restart_container():
-    container = get_container()
-    container.restart()
+    return container_list

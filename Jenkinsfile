@@ -29,7 +29,7 @@ pipeline {
         stage('Check Python'){
             steps{
                 bat'''
-                "C:\Users\User\AppData\Local\Microsoft\WindowsApps\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\python.exe" --version
+                "C:\Users\User\AppData\Local\Python\bin\python.exe" --version
                 '''
             }
     }

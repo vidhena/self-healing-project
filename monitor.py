@@ -2,121 +2,46 @@ import docker
 import os
 from datetime import datetime
 
-app = Flask(__name__)
-
 client = docker.from_env()
 
+CONTAINER_NAME = "flask-monitor"
 
-@app.route("/")
-def dashboard():
+LOG_DIR = "logs"
+LOG_FILE = os.path.join(LOG_DIR, "incidents.log")
 
-    containers = client.containers.list(all=True)
 
-    images = client.images.list()
-    volumes = client.volumes.list()
+def write_log(message):
+    if not os.path.exists(LOG_DIR):
+        os.makedirs(LOG_DIR)
 
-    container_list = []
+    with open(LOG_FILE, "a") as file:
+        file.write(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} | {message}\n")
 
-    running = 0
-    stopped = 0
 
-    for container in containers:
+try:
+    container = client.containers.get(CONTAINER_NAME)
 
-        status = container.status
+    container.reload()
 
-        if status == "running":
-            running += 1
-        else:
-            stopped += 1
-
-        uptime = "-"
-
-        try:
-            if status == "running":
-                uptime = container.attrs["State"]["StartedAt"]
-        except:
-            pass
-
-        container_list.append({
-            "id": container.short_id,
-            "name": container.name,
-            "image": container.image.tags[0] if container.image.tags else "No Tag",
-            "status": status,
-            "uptime": uptime
-        })
-
-    total = len(container_list)
-
-    total_images = len(images)
-
-    total_volumes = len(volumes)
-
-    last_updated = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
-
-    logs = []
-
-    log_file = "logs/incidents.log"
-
-    if os.path.exists(log_file):
-
-        with open(log_file, "r") as file:
-
-            logs = file.readlines()
-
-            logs.reverse()
+    if container.status == "running":
+        print(f"{CONTAINER_NAME} is running.")
+        write_log(f"{CONTAINER_NAME} is running.")
 
     else:
+        print(f"{CONTAINER_NAME} stopped. Restarting...")
+        write_log(f"{CONTAINER_NAME} stopped. Restarting...")
 
-        logs.append("No incidents found.")
-
-    return render_template(
-        "dashboard.html",
-        containers=container_list,
-        total=total,
-        running=running,
-        stopped=stopped,
-        total_images=total_images,
-        total_volumes=total_volumes,
-        last_updated=last_updated,
-        logs=logs
-    )
-
-
-@app.route("/start/<container_name>")
-def start_container(container_name):
-
-    try:
-        container = client.containers.get(container_name)
-        container.start()
-    except Exception as e:
-        print(e)
-
-    return redirect(url_for("dashboard"))
-
-
-@app.route("/stop/<container_name>")
-def stop_container(container_name):
-
-    try:
-        container = client.containers.get(container_name)
-        container.stop()
-    except Exception as e:
-        print(e)
-
-    return redirect(url_for("dashboard"))
-
-
-@app.route("/restart/<container_name>")
-def restart_container(container_name):
-
-    try:
-        container = client.containers.get(container_name)
         container.restart()
-    except Exception as e:
-        print(e)
 
-    return redirect(url_for("dashboard"))
+        print(f"{CONTAINER_NAME} restarted successfully.")
+        write_log(f"{CONTAINER_NAME} restarted successfully.")
 
+except docker.errors.NotFound:
+    msg = f"Container '{CONTAINER_NAME}' not found."
+    print(msg)
+    write_log(msg)
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+except Exception as e:
+    msg = f"Error: {str(e)}"
+    print(msg)
+    write_log(msg)

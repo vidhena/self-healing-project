@@ -26,7 +26,7 @@ pipeline {
             }
         }
         stage('Debug Files') {
-        steps {
+            steps {
         bat '''
         echo ===== Current Folder =====
         cd
@@ -53,6 +53,12 @@ pipeline {
             steps{
                 bat 'python --version'
             }
+    }
+        stage('install Dependencies'){
+            steps{
+                bat'python -m pip install -r requirements.txt'
+            }
+
     }
         stage('Container Action') {
             steps {

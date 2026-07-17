@@ -41,7 +41,12 @@ except docker.errors.NotFound:
     print(msg)
     write_log(msg)
 
+<<<<<<< HEAD
 except Exception as e:
     msg = f"Error: {str(e)}"
     print(msg)
     write_log(msg)
+=======
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000, debug=True)
+>>>>>>> 45c5671e0c82d4d5e8bc736d074877bb998582ac
